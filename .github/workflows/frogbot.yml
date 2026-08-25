@@ -17,14 +17,48 @@ permissions:
 
 jobs:
   frogbot-scan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 2-core runner - appropriate for I/O-bound security scanning
+    timeout-minutes: 15  # Prevent runaway processes, typical scan duration: 3-10 minutes
     strategy:
       matrix:
         branch: ["master"]
     steps:
+      # Resource monitoring: Log initial system state
+      - name: Log resource usage (start)
+        run: |
+          echo "=== Workflow Resource Monitoring ==="
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Runner: ubuntu-latest (2-core, 7GB RAM)"
+          echo "Job: frogbot-scan"
+          echo ""
+          echo "=== System Resources (Start) ==="
+          echo "CPU Info:"
+          nproc
+          echo "Memory Info:"
+          free -h
+          echo "Disk Info:"
+          df -h /
+          echo "Load Average:"
+          uptime
+          echo "================================"
+
       - uses: jfrog/frogbot@v2
         env:
           JF_URL: ${{ secrets.JF_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JF_GIT_BASE_BRANCH: ${{ matrix.branch }}
+
+      # Resource monitoring: Log final system state
+      - name: Log resource usage (end)
+        if: always()
+        run: |
+          echo "=== System Resources (End) ==="
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Memory Info:"
+          free -h
+          echo "Disk Info:"
+          df -h /
+          echo "Load Average:"
+          uptime
+          echo "================================"
