@@ -15,3 +15,30 @@
 /log/*
 !/log/.keep
 /tmp
+
+# Ignore compiled assets (Sprockets asset pipeline).
+/public/assets
+
+# Ignore Ruby compiled files.
+*.rbc
+
+# Ignore Byebug debugger history.
+.byebug_history
+
+# Ignore environment variable files.
+.env
+.env.*
+!.env.example
+
+# Ignore Rails master key (credentials encryption key).
+/config/master.key
+
+# Ignore Node.js dependencies.
+node_modules/
+
+# Ignore Yarn error log.
+yarn-error.log
+
+# Ignore Capybara test artifacts.
+capybara-*.html
+/tmp/capybara
